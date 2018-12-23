@@ -12,7 +12,7 @@
         </el-dropdown-menu>
       </el-dropdown>
     </el-card>
-    <el-button class="delete" type="danger"><i class="el-icon-delete"></i>删除文件</el-button>
+    <el-button class="delete" type="danger" @click='deleteFile()'><i class="el-icon-delete"></i>删除文件</el-button>
     <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-change="handleChange"
       :file-list="fileList3">
       <el-button class="upload" type="primary"><i class="el-icon-upload"></i>上传文件</el-button>
@@ -24,33 +24,29 @@
       <el-table-column type="selection" width="55">
       </el-table-column>
 
-      <el-table-column prop="name" label="文件名" width="120">
+      <el-table-column prop="file_name" label="文件名" width="120">
       </el-table-column>
-      <el-table-column prop="memorysize" label="大小" class="size">
+      <el-table-column prop="file_path" label="路径" class="size">
       </el-table-column>
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="文件名">
-              <span>{{ props.row.name }}</span>
+              <span>{{ props.row.file_name }}</span>
             </el-form-item>
-            <el-form-item label="文件大小">
-              <span>{{ props.row.shop }}</span>
-            </el-form-item>
+         
             <el-form-item label="文件类型">
-              <span>{{ props.row.id }}</span>
+              <span>{{ props.row.file_type }}</span>
             </el-form-item>
-            <el-form-item label="修改日期">
-              <span>{{ props.row.shopId }}</span>
-            </el-form-item>
+        
             <el-form-item label="作者">
-              <span>{{ props.row.category }}</span>
+              <span>{{ props.row.file_author }}</span>
             </el-form-item>
             <el-form-item label="专辑">
-              <span>{{ props.row.address }}</span>
+              <span>{{ props.row.file_album }}</span>
             </el-form-item>
             <el-form-item label="文件描述">
-              <span>{{ props.row.desc }}</span>
+              <span>{{ props.row.file_info }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -58,7 +54,7 @@
       <el-table-column prop="tag" label="类型" width="100" :filters="[{ text: 'mp4', value: 'mp4' }, { text: 'avi', value: 'avi' }]"
         :filter-method="filterTag" filter-placement="bottom-end">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.tag === 'mp4' ? 'primary' : 'success'" disable-transitions>{{scope.row.tag}}</el-tag>
+          <el-tag :type="scope.row.tag === 'mp4' ? 'primary' : 'success'" disable-transitions>{{scope.row.file_type}}</el-tag>
         </template>
       </el-table-column>
     </el-table>
@@ -112,72 +108,7 @@
 export default {
     data() {
       return {
-        tableData: [{
-          date: '2016-05-02',
-          name: 'xxx.mp4',
-          memorysize: '1234kb',
-          tag: 'mp4'
-        }, {
-          date: '2016-05-04',
-          name: 'xxx.mp4',
-          memorysize: '1234kb',
-          tag: 'mp4'
-        }, {
-          date: '2016-05-01',
-          name: 'uuu.avi',
-          memorysize: '1234kb',
-          tag: 'avi'
-        }, {
-          date: '2016-05-03',
-          name: 'uuu.avi',
-          memorysize: '1234kb',
-          tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        }],
+        tableData: [],
         fileList3: [{
           name: 'food.jpeg',
           url:
@@ -211,7 +142,17 @@ export default {
     },
     handleChange(file, fileList) {
       this.fileList3 = fileList.slice(-3);
+    },
+    deleteFile: function(){
+      
     }
+    },
+    mounted(){
+      this.$axios.get('/api/show_files')
+      .then((ans)=>{
+        console.log(ans.data)
+        this.tableData = ans.data
+      })
     }
 }
 </script>
