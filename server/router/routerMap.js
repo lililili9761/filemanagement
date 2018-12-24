@@ -32,19 +32,27 @@ router.post('/api/login', (req, res) => {
     console.log(user.account)
     api.sqlQuery(sentence.user_verify, user.account)
         .then((result) => {
+            console.log(result)
             let send_json = {}
-            if (result == []) {
-                send_json.existuser = false
-                res.end(send_json)
+            // if (result == []) {
+            //     console.log('no data')
+            //     res.send(send_json)
+            //     return
+            // }
+            if (result[0]) {
+                if (result[0].user_psw == user.password) {
+                    console.log('password content')
+                    send_json = result[0]
+                    send_json.existuser = true
+                    console.log(send_json.isadmin)
+
+                    res.send(send_json)
+                    return
+                }
             }
-            else if (result[0].user_psw !== user.password) {
-                send_json.existuser = false
-                res.end(send_json)
-            }
-            send_json = result[0]
-            send_json.existuser = true
+            send_json.existuser = false
+            console.log(send_json)
             res.send(send_json)
-            console.log(send_json.isadmin)
         })
 })
 
@@ -105,7 +113,7 @@ router.post('/api/register', (req, res) => {
     console.log(new_info)
     api.sqlQuery(sentence.register, new_info)
         .then((ans) => {
-            
+
             if (ans) {
                 console.log(ans)
                 send_info.registersuccess = true
@@ -115,9 +123,9 @@ router.post('/api/register', (req, res) => {
             }
         })
         .catch((er) => {
-             console.log(er)
-             res.send(send_info  )
-            
+            console.log(er)
+            res.send(send_info)
+
         })
 })
 module.exports = router
