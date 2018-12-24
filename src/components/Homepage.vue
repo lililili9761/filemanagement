@@ -4,17 +4,26 @@
     <el-card class="box-card usercard" shadow="never">
       <el-dropdown>
         <span class="el-dropdown-link">
-          欢迎您，<span>管理员</span><span>lililili</span><i class="el-icon-arrow-down el-icon--right"></i>
+          欢迎您，<span v-if="isadmin">管理员</span><span>{{username}}</span><i class="el-icon-arrow-down el-icon--right"></i>
         </span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item>帮助</el-dropdown-item>
-          <el-dropdown-item divided>注销</el-dropdown-item>
+          <el-dropdown-item @click.native="loginout" divided>注销</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
     </el-card>
-    <el-button class="delete" type="danger"><i class="el-icon-delete"></i>删除文件</el-button>
-    <el-upload class="upload-demo" action="https://jsonplaceholder.typicode.com/posts/" :on-change="handleChange"
-      :file-list="fileList3">
+    <el-button class="delete" type="danger" @click='deleteFile()'><i class="el-icon-delete"></i>删除文件</el-button>
+    <el-upload 
+      ref="upload"
+      class="upload-demo" 
+      action="/api/upload_file" 
+      :on-change="handleChange" 
+      :limit='5'
+      :on-exceed='uploadOverrun'
+      :file-list="fileList3" 
+      multiple
+      accpet="audio/*,video/*"
+      :before-upload="onBeforeUpload" >
       <el-button class="upload" type="primary"><i class="el-icon-upload"></i>上传文件</el-button>
     </el-upload>
   </el-aside>
@@ -23,34 +32,38 @@
       @selection-change="handleSelectionChange">
       <el-table-column type="selection" width="55">
       </el-table-column>
-
-      <el-table-column prop="name" label="文件名" width="120">
+      <el-table-column prop="file_name" label="文件名" width="120">
       </el-table-column>
-      <el-table-column prop="memorysize" label="大小" class="size">
+      <el-table-column prop="file_path" label="路径" class="size">
+      </el-table-column>
+      <el-table-column prop="openmethod" label="打开方式" class="openmethod">
+　　    <template slot-scope="scope">
+        <div>
+　　　　   <img src="../assets/iqiyi.png" width="28" style="border-radius: 50%;margin-right: 7px;cursor:pointer" class="head_pic" />
+          <img src="../assets/qqlive.png" width="28" style="border-radius: 50%;margin-right: 7px;cursor:pointer" class="head_pic" />
+          <img src="../assets/mgtv.png" width="28" style="border-radius: 50%;margin-right: 7px;cursor:pointer" class="head_pic" />
+        </div>  
+　　    </template>
       </el-table-column>
       <el-table-column type="expand">
         <template slot-scope="props">
           <el-form label-position="left" inline class="demo-table-expand">
             <el-form-item label="文件名">
-              <span>{{ props.row.name }}</span>
+              <span>{{ props.row.file_name }}</span>
             </el-form-item>
-            <el-form-item label="文件大小">
-              <span>{{ props.row.shop }}</span>
-            </el-form-item>
+         
             <el-form-item label="文件类型">
-              <span>{{ props.row.id }}</span>
+              <span>{{ props.row.file_type }}</span>
             </el-form-item>
-            <el-form-item label="修改日期">
-              <span>{{ props.row.shopId }}</span>
-            </el-form-item>
+        
             <el-form-item label="作者">
-              <span>{{ props.row.category }}</span>
+              <span>{{ props.row.file_author }}</span>
             </el-form-item>
             <el-form-item label="专辑">
-              <span>{{ props.row.address }}</span>
+              <span>{{ props.row.file_album }}</span>
             </el-form-item>
             <el-form-item label="文件描述">
-              <span>{{ props.row.desc }}</span>
+              <span>{{ props.row.file_info }}</span>
             </el-form-item>
           </el-form>
         </template>
@@ -58,9 +71,10 @@
       <el-table-column prop="tag" label="类型" width="100" :filters="[{ text: 'mp4', value: 'mp4' }, { text: 'avi', value: 'avi' }]"
         :filter-method="filterTag" filter-placement="bottom-end">
         <template slot-scope="scope">
-          <el-tag :type="scope.row.tag === 'mp4' ? 'primary' : 'success'" disable-transitions>{{scope.row.tag}}</el-tag>
+          <el-tag :type="scope.row.tag === 'mp4' ? 'primary' : 'success'" disable-transitions>{{scope.row.file_type}}</el-tag>
         </template>
       </el-table-column>
+      
     </el-table>
   </el-main>
 </el-container>
@@ -109,84 +123,26 @@
 </style>
 
 <script>
+import EventHandler from "../assets/EventHandler.js";
 export default {
     data() {
       return {
-        tableData: [{
-          date: '2016-05-02',
-          name: 'xxx.mp4',
-          memorysize: '1234kb',
-          tag: 'mp4'
-        }, {
-          date: '2016-05-04',
-          name: 'xxx.mp4',
-          memorysize: '1234kb',
-          tag: 'mp4'
-        }, {
-          date: '2016-05-01',
-          name: 'uuu.avi',
-          memorysize: '1234kb',
-          tag: 'avi'
-        }, {
-          date: '2016-05-03',
-          name: 'uuu.avi',
-          memorysize: '1234kb',
-          tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        },{
-            date: '2016-05-03',
-            name: 'uuu.avi',
-            memorysize: '1234kb',
-            tag: 'avi'
-        }],
-        fileList3: [{
-          name: 'food.jpeg',
-          url:
-          'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }, {
-          name: 'food2.jpeg',
-          url:
-          'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
-        }]
+        tableData: [],
+        fileList3: [//{
+        //   name: 'food.jpeg',
+        //   url:
+        //   'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        // }, {
+        //   name: 'food2.jpeg',
+        //   url:
+        //   'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'
+        //}
+        ],
+        isadmin:'',
+        username:'',
+        openmethod:[
+          "../assets/iqiyi.png","../assets/qqlive.png","../assets/mgtv.png"
+        ]
       }
     },
 
@@ -210,8 +166,60 @@ export default {
       console.log(index, row);
     },
     handleChange(file, fileList) {
-      this.fileList3 = fileList.slice(-3);
+      var oldtable = this.tableData;
+      var uploaddata = this.$refs.upload.uploadFiles;
+      this.fileList3 = fileList;
+      for(var i=uploaddata.length-1;i<uploaddata.length;i++) {
+        var j = 4;
+        this.tableData.push({
+          file_name:uploaddata[i].name,
+          file_type:uploaddata[i].raw.type,
+          file_id:j++,
+          file_path:"/User/lililili9761/Downloads"
+        });
+      }
+    },
+    deleteFile: function(){
+      
+    },
+    onBeforeUpload(file){
+      var isTruetype = file.type === 'audio/*'||'video/*';
+      console.log(isTruetype);
+      if(!isTruetype) {
+        this.$message.error('上传文件只能是视频/音频');
+        console.log('??');
+      }
+    },
+    uploadOverrun:function() {
+      this.$message({
+        type:'error',
+        message:'上传文件个数超出限制，最多上传5个文件。'
+      })
+    },
+    loginout:function() {
+      var me = this;
+      setTimeout(function() {
+        this.$cookies.remove('username');
+        me.$router.push("/");
+        window.location.reload();
+      }, 1000);
     }
+    },
+    mounted(){
+      var me = this;
+      EventHandler.$on('newdata',(data)=>{
+        me.tableData=data; 
+      })
+
+      this.$axios.get('/api/show_files')
+      .then((ans)=>{
+        this.tableData = ans.data;
+        console.log(this.tableData);
+        var isadmin = this.$cookies.get('isadmin');
+        var username = this.$cookies.get('username');
+        this.username = username;
+        this.isadmin = isadmin;
+      })
     }
 }
 </script>

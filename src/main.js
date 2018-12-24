@@ -7,9 +7,11 @@ import App from './App'
 import router from './router'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
+import VueCookies from 'vue-cookies'
 
 Vue.use(ElementUI)
 Vue.use(VueAxios,axios)
+Vue.use(VueCookies)
 
 Vue.config.productionTip = false;
 Vue.prototype.$axios = axios;

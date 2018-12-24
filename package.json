@@ -11,11 +11,15 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
     "bootstrap": "^3.3.7",
     "element-ui": "^2.4.11",
+    "express": "^4.16.4",
     "jquery": "^3.3.1",
+    "mysql": "^2.16.0",
     "vue": "^2.5.2",
     "vue-axios": "^2.1.4",
+    "vue-cookies": "^1.5.12",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
