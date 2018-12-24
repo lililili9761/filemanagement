@@ -57,29 +57,35 @@ router.post('/api/login', (req, res) => {
 })
 
 router.post('/api/play', (req, res) => {
-    //wait yxt
     let file_info = req.body
-    //file_info.byway
     const openby = {
-        aqy: 'open -a by tencent-vedio ',
-        bf: 'open -a by baofeng-vedio',
-        qt: 'open -a by quicktime-player '
+        aqy: 'open -a  iqiyi ',
+        qq: 'open -a  qqlive ',
+        mg: 'open -a mgtv  '
     }
 
+    const absolute_path = '/Users/lililili9761/Downloads/'
+
+    console.log(file_info)
+
     if (file_info.byway == 'aqy') {
-        let playfile = openby.aqy + file_info.file_path
+        console.log('aqy')
+        let playfile = openby.aqy + absolute_path + file_info.file_name
         child_process.exec(playfile)
-        res.end()
+        // res.end()
+        console.log(playfile)
     }
-    else if (file_info.byway == 'bf') {
-        let playfile = openby.bf + file_info.file_path
+    else if (file_info.byway == 'qq') {
+        console.log('qq')
+        let playfile = openby.qq + absolute_path + file_info.file_name
+
         child_process.exec(playfile)
-        res.end()
     }
     else {
-        let playfile = openby.qt + file_info.file_path
+        console.log('mg')
+        let playfile = openby.mg + absolute_path + file_info.file_name
+
         child_process.exec(playfile)
-        res.end()
     }
 })
 
@@ -94,14 +100,14 @@ router.post('/api/upload_file', (req, res) => {
 
     }
     console.log(send_info)
-    if(send_info.length !== 0){
-        api.sqlQuery(sentence.add_file,send_info)
-        .then((ans)=>{
-            console.log("innserted!")
-        })
-        .catch((er)=>{
-            console.log(er)
-        })
+    if (send_info.length !== 0) {
+        api.sqlQuery(sentence.add_file, send_info)
+            .then((ans) => {
+                console.log("innserted!")
+            })
+            .catch((er) => {
+                console.log(er)
+            })
     }
 })
 

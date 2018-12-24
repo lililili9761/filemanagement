@@ -5,7 +5,7 @@
         <h3 style="text-align:center; font-size:18px; font-weight:600; color:#666"><i class="el-icon-document"></i>文件管理系统</h3>
       </el-col>
       <el-col :span="20" style="height: 60px; padding-right: 2em">
-        <div class="search"v-if="username">
+        <div class="search" v-if="username">
           <el-input 
           style="margin-right:1em" 
           placeholder="请输入文件名搜索" 
