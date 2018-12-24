@@ -32,19 +32,27 @@ router.post('/api/login', (req, res) => {
     console.log(user.account)
     api.sqlQuery(sentence.user_verify, user.account)
         .then((result) => {
+            console.log(result)
             let send_json = {}
-            if (result == []) {
-                send_json.existuser = false
-                res.end(send_json)
+            // if (result == []) {
+            //     console.log('no data')
+            //     res.send(send_json)
+            //     return
+            // }
+            if (result[0]) {
+                if (result[0].user_psw == user.password) {
+                    console.log('password content')
+                    send_json = result[0]
+                    send_json.existuser = true
+                    console.log(send_json.isadmin)
+
+                    res.send(send_json)
+                    return
+                }
             }
-            else if(result[0].user_psw !== user.password){
-                send_json.existuser = false
-                res.end(send_json)
-            }
-            send_json = result[0]
-            send_json.existuser = true
+            send_json.existuser = false
+            console.log(send_json)
             res.send(send_json)
-            console.log(send_json.isadmin)
         })
 })
 
@@ -94,18 +102,30 @@ router.post('/api/upload_file', (req, res) => {
 
 router.post('/api/register', (req, res) => {
     const new_user = req.body
+    // console.log(new_user)
     let new_info = []
-    for (let key in new_user) {
-        new_info.push(new_user[key])
+    new_info.push(new_user.account, new_user.password)
+    new_info.push(0)
+    let send_info = {
+        registersuccess: false
     }
 
-    api.sqlQuery(sentence.register, new_info, (er, result) => {
-        if (er) {
-            console.log(er)
-            res.end(false)
-        }
+    console.log(new_info)
+    api.sqlQuery(sentence.register, new_info)
+        .then((ans) => {
 
-        res.end(true)
-    })
+            if (ans) {
+                console.log(ans)
+                send_info.registersuccess = true
+                console.log(send_info)
+                res.send(send_info)
+                res.end();
+            }
+        })
+        .catch((er) => {
+            console.log(er)
+            res.send(send_info)
+
+        })
 })
 module.exports = router

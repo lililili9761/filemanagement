@@ -144,7 +144,9 @@ export default {
                 me.$router.push("/homepage");
                 window.location.reload();
               }, 1000);
+              return
             }
+            alert('wrong account or password!')
           });
         } else {
           console.log("error submit!!");
