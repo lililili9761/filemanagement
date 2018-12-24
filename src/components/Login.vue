@@ -130,13 +130,11 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate(valid => {
         if (valid) {
-          alert("submit!");
           //this.$router.push('/homepage');
           var me = this;
           this.$axios.post("/api/login", this.ruleForm).then(res => {
-            // console.log(res.data)
-            this.existuser = res.data.existuser;
-            if (this.existuser) {
+              console.log(res.data)
+            if (res.data.existuser) {
               console.log(res.data)
               this.isadmin = res.data.isadmin;
 
@@ -144,7 +142,9 @@ export default {
                 me.$router.push("/homepage");
                 window.location.reload();
               }, 1000);
+              return
             }
+            alert('wrong account or password!')
           });
         } else {
           console.log("error submit!!");
