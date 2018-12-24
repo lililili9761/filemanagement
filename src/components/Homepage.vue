@@ -175,9 +175,7 @@ export default {
           file_name:uploaddata[i].name,
           file_type:uploaddata[i].raw.type,
           file_path:"/User/lililili9761/Downloads/"+uploaddata[i].name,
-          file_info:"",
-          file_album:"",
-          file_author:""
+          
         }).then((res)=>{
           
         })

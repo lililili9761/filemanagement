@@ -27,12 +27,12 @@ router.post('/api/search', (req, res) => {
 
 router.post('/api/login', (req, res) => {
     let user = req.body
-    console.log(user)
+    // console.log(user)
 
-    console.log(user.account)
+    // console.log(user.account)
     api.sqlQuery(sentence.user_verify, user.account)
         .then((result) => {
-            console.log(result)
+            // console.log(result)
             let send_json = {}
             // if (result == []) {
             //     console.log('no data')
@@ -44,14 +44,14 @@ router.post('/api/login', (req, res) => {
                     console.log('password content')
                     send_json = result[0]
                     send_json.existuser = true
-                    console.log(send_json.isadmin)
+                    // console.log(send_json.isadmin)
 
                     res.send(send_json)
                     return
                 }
             }
             send_json.existuser = false
-            console.log(send_json)
+            // console.log(send_json)
             res.send(send_json)
         })
 })
@@ -85,19 +85,24 @@ router.post('/api/play', (req, res) => {
 
 router.post('/api/upload_file', (req, res) => {
     //wait yxt
+    // console.log( req.body)
+    let send_info = []
     const file_infoes = req.body
-    let info_array = []
+    // console.log(file_infoes)
     for (let key in file_infoes) {
-        info_array.push(file_infoes[key])
-    }
+        send_info.push(file_infoes[key])
 
-    api.sqlQuery(sentence.add_file, info_array, (er, result) => {
-        if (er) {
-            res.end(false)
+    }
+    console.log(send_info)
+    if(send_info.length !== 0){
+        api.sqlQuery(sentence.add_file,send_info)
+        .then((ans)=>{
+            console.log("innserted!")
+        })
+        .catch((er)=>{
             console.log(er)
-        }
-        res.end(true)
-    })
+        })
+    }
 })
 
 router.post('/api/register', (req, res) => {
@@ -110,14 +115,14 @@ router.post('/api/register', (req, res) => {
         registersuccess: false
     }
 
-    console.log(new_info)
+    // console.log(new_info)
     api.sqlQuery(sentence.register, new_info)
         .then((ans) => {
 
             if (ans) {
-                console.log(ans)
+                // console.log(ans)
                 send_info.registersuccess = true
-                console.log(send_info)
+                // console.log(send_info)
                 res.send(send_info)
                 res.end();
             }
