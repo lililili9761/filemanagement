@@ -166,11 +166,21 @@ export default {
       console.log(index, row);
     },
     handleChange(file, fileList) {
-      var oldtable = this.tableData;
       var uploaddata = this.$refs.upload.uploadFiles;
       this.fileList3 = fileList;
+      
       for(var i=uploaddata.length-1;i<uploaddata.length;i++) {
         var j = 4;
+        this.$axios.post('/api/upload_file',{
+          file_name:uploaddata[i].name,
+          file_type:uploaddata[i].raw.type,
+          file_path:"/User/lililili9761/Downloads/"+uploaddata[i].name,
+          file_info:"",
+          file_album:"",
+          file_author:""
+        }).then((res)=>{
+          
+        })
         this.tableData.push({
           file_name:uploaddata[i].name,
           file_type:uploaddata[i].raw.type,
