@@ -5,7 +5,7 @@
         <el-dropdown>
           <span class="el-dropdown-link">
             欢迎您，
-            <span v-if="isadmin">管理员</span>
+            <span v-if="isadmin==1">管理员</span>
             <span>{{username}}</span>
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
@@ -15,7 +15,7 @@
           </el-dropdown-menu>
         </el-dropdown>
       </el-card>
-      <el-button class="delete" type="danger" @click="deleteFile()">
+      <el-button v-if="isadmin==1" class="delete" type="danger" @click="deleteFile()">
         <i class="el-icon-delete"></i>删除文件
       </el-button>
       <el-upload
@@ -30,7 +30,7 @@
         accpet="audio/*,video/*"
         :before-upload="onBeforeUpload"
       >
-        <el-button class="upload" type="primary">
+        <el-button v-if="isadmin==1" class="upload" type="primary">
           <i class="el-icon-upload"></i>上传文件
         </el-button>
       </el-upload>
@@ -181,7 +181,9 @@ export default {
         "../assets/iqiyi.png",
         "../assets/qqlive.png",
         "../assets/mgtv.png"
-      ]
+      ],
+      selection:"",
+      deleteindex:""
     };
   },
 
@@ -194,9 +196,6 @@ export default {
       } else {
         this.$refs.multipleTable.clearSelection();
       }
-    },
-    handleSelectionChange(val) {
-      this.multipleSelection = val;
     },
     filterTag(value, row) {
       return row.tag === value;
@@ -214,24 +213,57 @@ export default {
           .post("/api/upload_file", {
             file_name: uploaddata[i].name,
             file_type: uploaddata[i].raw.type,
-            file_path: "/User/lililili9761/Downloads/" + uploaddata[i].name
+            file_path: "/Users/lililili9761/Downloads/" + uploaddata[i].name
           })
           .then(res => {});
         this.tableData.push({
           file_name: uploaddata[i].name,
           file_type: uploaddata[i].raw.type,
           file_id: j++,
-          file_path: "/User/lililili9761/Downloads"
+          file_path: "/Users/lililili9761/Downloads/" + + uploaddata[i].name
         });
       }
     },
-    deleteFile: function() {},
+    deleteFile: function(){
+       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning',
+          center: true
+        }).then(() => {
+          var me = this;
+          var row_index = [];
+          // for(var i=0;i<me.selection.length;i++) {
+          //   me.$axios.post("/api/delete",{
+          //     file_id:me.selection[i].file_id
+          //   }).then(res = {});
+          // }
+          me.selection.forEach((val,index,arr)=>{
+            me.tableData.forEach((v,i,a)=>{
+              if(val.file_id == v.file_id) {
+                row_index.push(i);
+              }
+            })
+          }) 
+          for(var j=row_index.length-1;j>=0;j--) {
+            me.tableData.splice(row_index[j],1);
+          }
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+    },
     onBeforeUpload(file) {
       var isTruetype = file.type === "audio/*" || "video/*";
       console.log(isTruetype);
       if (!isTruetype) {
         this.$message.error("上传文件只能是视频/音频");
-        console.log("??");
       }
     },
     uploadOverrun: function() {
@@ -249,7 +281,6 @@ export default {
       }, 1000);
     },
     open_file: function(data,byway) {
-      //  console.log(row);
       this.$axios
         .post("/api/play", {
           file_name: data.file_name,
@@ -257,6 +288,9 @@ export default {
         })
         .then(ans => {})
         .catch(er => {});
+    },
+    handleSelectionChange:function(val) {
+      this.selection = val;
     }
   },
   mounted() {

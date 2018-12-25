@@ -2,8 +2,8 @@ module.exports= {
    mydb:{
        host: 'localhost',
        user: 'root',
-       password: '',
-       database: 'yuxiaotong',
+       password: 'password',
+       database: 'filemanagement',
        port: '3306'
    } 
 }

@@ -57,11 +57,12 @@ router.post('/api/login', (req, res) => {
 })
 
 router.post('/api/play', (req, res) => {
-    let file_info = req.body
+    console.log("1");
+    let file_info = req.body;
     const openby = {
-        aqy: 'open -a  iqiyi ',
-        qq: 'open -a  qqlive ',
-        mg: 'open -a mgtv  '
+        aqy: 'open -a 爱奇艺 ',
+        qq: 'open -a QQLive ',
+        mg: 'open -a Imgotv-Mac '
     }
 
     const absolute_path = '/Users/lililili9761/Downloads/'
@@ -69,7 +70,7 @@ router.post('/api/play', (req, res) => {
     console.log(file_info)
 
     if (file_info.byway == 'aqy') {
-        console.log('aqy')
+        console.log('aqy');
         let playfile = openby.aqy + absolute_path + file_info.file_name
         child_process.exec(playfile)
         // res.end()
@@ -91,7 +92,7 @@ router.post('/api/play', (req, res) => {
 
 router.post('/api/upload_file', (req, res) => {
     //wait yxt
-    // console.log( req.body)
+    console.log( req.body);
     let send_info = []
     const file_infoes = req.body
     // console.log(file_infoes)
