@@ -182,8 +182,8 @@ export default {
         "../assets/qqlive.png",
         "../assets/mgtv.png"
       ],
-      selection:"",
-      deleteindex:""
+      selection: "",
+      deleteindex: ""
     };
   },
 
@@ -220,42 +220,56 @@ export default {
           file_name: uploaddata[i].name,
           file_type: uploaddata[i].raw.type,
           file_id: j++,
-          file_path: "/Users/lililili9761/Downloads/" + + uploaddata[i].name
+          file_path: "/Users/lililili9761/Downloads/" + +uploaddata[i].name
         });
       }
     },
-    deleteFile: function(){
-       this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-          center: true
-        }).then(() => {
+    deleteFile: function() {
+      this.$confirm("此操作将永久删除该文件, 是否继续?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+        center: true
+      })
+        .then(() => {
           var me = this;
           var row_index = [];
+          var send_file_id = [];
           // for(var i=0;i<me.selection.length;i++) {
           //   me.$axios.post("/api/delete",{
           //     file_id:me.selection[i].file_id
           //   }).then(res = {});
           // }
-          me.selection.forEach((val,index,arr)=>{
-            me.tableData.forEach((v,i,a)=>{
-              if(val.file_id == v.file_id) {
+          me.selection.forEach((val, index, arr) => {
+            me.tableData.forEach((v, i, a) => {
+              if (val.file_id == v.file_id) {
                 row_index.push(i);
+                send_file_id.push(val.file_id);
               }
-            })
-          }) 
-          for(var j=row_index.length-1;j>=0;j--) {
-            me.tableData.splice(row_index[j],1);
+            });
+          });
+          console.log(send_file_id);
+          for (var j = row_index.length - 1; j >= 0; j--) {
+            me.tableData.splice(row_index[j], 1);
+            this.$axios
+              .post("/api/delete_file", {
+                send_file_id: send_file_id[j]
+              })
+              .then(ans => {
+                console.log(ans.data)
+                alert('删除成功！')
+              })
+              .catch(er => {})
           }
           this.$message({
-            type: 'success',
-            message: '删除成功!'
+            type: "success",
+            message: "删除成功!"
           });
-        }).catch(() => {
+        })
+        .catch(() => {
           this.$message({
-            type: 'info',
-            message: '已取消删除'
+            type: "info",
+            message: "已取消删除"
           });
         });
     },
@@ -280,7 +294,7 @@ export default {
         window.location.reload();
       }, 1000);
     },
-    open_file: function(data,byway) {
+    open_file: function(data, byway) {
       this.$axios
         .post("/api/play", {
           file_name: data.file_name,
@@ -289,7 +303,7 @@ export default {
         .then(ans => {})
         .catch(er => {});
     },
-    handleSelectionChange:function(val) {
+    handleSelectionChange: function(val) {
       this.selection = val;
     }
   },

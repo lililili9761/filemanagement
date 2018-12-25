@@ -92,7 +92,7 @@ router.post('/api/play', (req, res) => {
 
 router.post('/api/upload_file', (req, res) => {
     //wait yxt
-    console.log( req.body);
+    console.log(req.body);
     let send_info = []
     const file_infoes = req.body
     // console.log(file_infoes)
@@ -140,4 +140,22 @@ router.post('/api/register', (req, res) => {
 
         })
 })
+
+router.post('/api/delete_file', (req, res) => {
+    console.log(req.body.send_file_id)
+    const id = req.body.send_file_id
+
+    let send_json = {}
+    api.sqlQuery(sqlMap.sql_sentence.delete_file,id)
+    .then(ans=>{
+        console.log('删除成功！')
+        send_json.isDelete  = true
+        res.send(send_json)
+        return
+    })
+    .catch(er=>{
+        console.log(er)
+    })
+})
+
 module.exports = router
